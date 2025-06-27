@@ -2,7 +2,7 @@
   "dxt_version": "0.1",
   "name": "chrome-devtools-protocol",
   "display_name": "Chrome DevTools MCP",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Chrome DevTools Protocol integration for web application debugging",
   "long_description": "This extension provides Chrome DevTools Protocol integration through a Python MCP server. It allows Claude to connect to Chrome browsers for debugging web applications, monitoring network requests, inspecting console logs, analyzing performance metrics, and manipulating DOM elements.",
   "author": {
