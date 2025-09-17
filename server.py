@@ -36,5 +36,12 @@ from src.main import mcp
 # Export the MCP server object for MCP CLI detection and tooling
 __all__ = ["mcp", "main"]
 
+
+def main():
+    """Entry point for the chrome-devtools-mcp script."""
+    from src.main import main as run_server
+    run_server()
+
+
 if __name__ == "__main__":
-    main.main()
+    main()

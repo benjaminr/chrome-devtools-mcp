@@ -78,6 +78,19 @@ mcp install server.py -n "Chrome DevTools MCP" --with-editable . -f .env
 
 **For Claude Code CLI users:**
 
+#### Quick Install (Easiest - no cloning required)
+
+```bash
+claude mcp add chrome-devtools-mcp -- uvx --from git+https://github.com/benjaminr/chrome-devtools-mcp chrome-devtools-mcp
+```
+
+This single command will:
+- Install the server directly from GitHub
+- Handle all dependencies automatically
+- Configure it for use with Claude Code
+
+#### Manual Install (if you want to modify the code)
+
 1. **Clone this repository**
 ```bash
 git clone https://github.com/benjaminr/chrome-devtools-mcp.git
@@ -192,6 +205,10 @@ After installation (either method), verify the server is available:
 
 For other MCP clients, run the server directly:
 ```bash
+# Using uvx (recommended - handles dependencies automatically)
+uvx --from . chrome-devtools-mcp
+
+# Or using Python directly
 python server.py
 ```
 
@@ -685,6 +702,19 @@ uv sync
 git clone https://github.com/benjaminr/chrome-devtools-mcp.git
 cd chrome-devtools-mcp
 pip install -e ".[dev]"
+```
+
+### Running the Server During Development
+
+```bash
+# Using uvx (recommended - automatically handles dependencies)
+uvx --from . chrome-devtools-mcp
+
+# Using uv run
+uv run python server.py
+
+# Or directly with Python (if dependencies installed)
+python server.py
 ```
 
 ### Code Quality Tools
