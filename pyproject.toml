@@ -32,6 +32,9 @@ dependencies = [
     "aiohttp>=3.9.0",
 ]
 
+[project.scripts]
+chrome-devtools-mcp = "src.main:main"
+
 [project.optional-dependencies]
 test = [
     "pytest>=8.0.0",
@@ -48,6 +51,10 @@ dev = [
 Homepage = "https://github.com/benjaminr/chrome-devtools-mcp"
 Repository = "https://github.com/benjaminr/chrome-devtools-mcp.git"
 Issues = "https://github.com/benjaminr/chrome-devtools-mcp/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src"]
