@@ -33,7 +33,7 @@ dependencies = [
 ]
 
 [project.scripts]
-chrome-devtools-mcp = "src.main:main"
+chrome-devtools-mcp = "server:main"
 
 [project.optional-dependencies]
 test = [
@@ -55,6 +55,9 @@ Issues = "https://github.com/benjaminr/chrome-devtools-mcp/issues"
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["src*"]
+
+[tool.setuptools]
+py-modules = ["server"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src"]
