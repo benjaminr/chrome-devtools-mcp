@@ -27,10 +27,14 @@ classifiers = [
 ]
 
 dependencies = [
-    "mcp>=1.0.0",
+    "mcp[cli]>=1.0.0",
     "websockets>=12.0",
     "aiohttp>=3.9.0",
 ]
+
+[project.scripts]
+# Installs a runnable CLI: `chrome-devtools-mcp`
+chrome-devtools-mcp = "src.main:main"
 
 [project.optional-dependencies]
 test = [
@@ -51,6 +55,10 @@ Issues = "https://github.com/benjaminr/chrome-devtools-mcp/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src"]
+
+[tool.setuptools.packages.find]
+# Include the top-level `src` package and all its subpackages
+include = ["src*"]
 
 [tool.uv]
 dev-dependencies = [
