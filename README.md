@@ -139,6 +139,22 @@ claude mcp get chrome-devtools
 - **Problem**: Server doesn't start or shows as disconnected
   - **Solution**: Test the command manually: `/path/to/.venv/bin/python /path/to/server.py`
 
+### Auto-start Chrome on connect
+
+By default, the `connect_to_browser` tool now auto-starts Chrome with
+`--remote-debugging-port` if it is not already running. You can control this:
+
+```python
+# Connect (will auto-start Chrome on port 9222 if missing)
+connect_to_browser()
+
+# Disable auto-start
+connect_to_browser(auto_start=False)
+
+# Auto-start in headless mode on a custom port, opening a URL
+connect_to_browser(port=9333, headless=True, url="https://example.com")
+```
+
 ### Option 4: Manual Claude Desktop Setup
 
 1. **Clone this repository**

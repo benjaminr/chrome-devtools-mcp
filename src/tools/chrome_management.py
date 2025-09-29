@@ -232,6 +232,8 @@ def register_chrome_tools(mcp: FastMCP) -> None:
                 # If auto_connect is enabled and Chrome is already running, connect now
                 if auto_connect and cdp_client:
                     try:
+                        # Ensure client targets the correct port before connecting
+                        cdp_client.port = port  # type: ignore[attr-defined]
                         if not cdp_client.connected:
                             connected = await cdp_client.connect()
                             if connected:
@@ -318,6 +320,8 @@ def register_chrome_tools(mcp: FastMCP) -> None:
             # Auto-connect if requested
             if auto_connect and cdp_client:
                 try:
+                    # Ensure client targets the correct port before connecting
+                    cdp_client.port = port  # type: ignore[attr-defined]
                     connected = await cdp_client.connect()
                     if connected:
                         await cdp_client.enable_domains()
@@ -390,7 +394,14 @@ def register_chrome_tools(mcp: FastMCP) -> None:
         return result  # type: ignore
 
     @mcp.tool()
-    async def connect_to_browser(port: int = 9222) -> dict[str, Any]:
+    async def connect_to_browser(
+        port: int = 9222,
+        *,
+        auto_start: bool = True,
+        headless: bool = False,
+        chrome_path: str | None = None,
+        url: str | None = None,
+    ) -> dict[str, Any]:
         """Connect to an existing Chrome instance with remote debugging enabled.
 
         Establishes a connection to a Chrome browser that's already running with
@@ -403,8 +414,11 @@ def register_chrome_tools(mcp: FastMCP) -> None:
 
         Args:
             port: TCP port where Chrome remote debugging is listening (default: 9222).
-                  Chrome must be started with --remote-debugging-port=PORT for this
-                  to work.
+            auto_start: If True, start Chrome with remote debugging when not found
+                        and then connect automatically.
+            headless: When auto-starting, whether to run Chrome in headless mode.
+            chrome_path: Optional explicit Chrome executable path when auto-starting.
+            url: Optional URL to open after connecting (used on auto-start too).
 
         Returns:
             Connection status dictionary containing:
@@ -416,9 +430,9 @@ def register_chrome_tools(mcp: FastMCP) -> None:
                 - targetInfo: Browser version and capability information
 
         Note:
-            If Chrome is not running on the specified port, the function returns
-            an error response with suggestions for starting Chrome with the correct
-            debugging options.
+            If Chrome is not running on the specified port and auto_start is True,
+            the server will launch Chrome with `--remote-debugging-port=PORT` and
+            connect to it automatically. Set auto_start=False to disable this.
         """
         from .. import main
 
@@ -429,12 +443,26 @@ def register_chrome_tools(mcp: FastMCP) -> None:
 
         try:
             if not await check_chrome_running(port):
-                return create_error_response(
-                    f"Chrome not running on port {port}",
-                    f"Start Chrome with: google-chrome --remote-debugging-port={port}",
-                )
+                if not auto_start:
+                    return create_error_response(
+                        f"Chrome not running on port {port}",
+                        f"Start Chrome with: google-chrome --remote-debugging-port={port}",
+                    )
 
-            connected = await cdp_client.connect()
+                # Attempt to start Chrome and auto-connect
+                start_result = await start_chrome(
+                    port=port,
+                    url=url,
+                    headless=headless,
+                    chrome_path=chrome_path,
+                    auto_connect=True,
+                )
+                if not start_result.get("success"):
+                    return start_result  # Propagate detailed error
+
+            # Ensure the client uses the requested port
+            cdp_client.port = port  # type: ignore[attr-defined]
+            connected = cdp_client.connected or await cdp_client.connect()
             if not connected:
                 return create_error_response("Failed to connect to Chrome")
 
